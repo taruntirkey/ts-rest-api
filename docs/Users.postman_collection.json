@@ -1,0 +1,115 @@
+{
+  "info": {
+    "_postman_id": "5ef3e82c-a0e0-40e6-bce9-a8e9ba2a1d8f",
+    "name": "Users",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "10107544"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "foo@test",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "Qwerty@12345",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseURL}}/users/auth",
+          "host": ["{{baseURL}}"],
+          "path": ["users", "auth"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "firstname",
+              "value": "foo",
+              "type": "text"
+            },
+            {
+              "key": "lastname",
+              "value": "bar",
+              "type": "text"
+            },
+            {
+              "key": "username",
+              "value": "foo@test",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "Qwerty@12345",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseURL}}/users",
+          "host": ["{{baseURL}}"],
+          "path": ["users"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/users/logout",
+          "host": ["{{baseURL}}"],
+          "path": ["users", "logout"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/users/profile",
+          "host": ["{{baseURL}}"],
+          "path": ["users", "profile"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Profile",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/users/profile",
+          "host": ["{{baseURL}}"],
+          "path": ["users", "profile"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

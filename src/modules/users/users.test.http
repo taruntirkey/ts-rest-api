@@ -1,0 +1,39 @@
+@baseUrl=http://localhost:5000/api/users
+
+### Authenticate User
+POST {{baseUrl}}/auth
+Content-Type: application/json
+
+{
+    "username":"foo@test",
+    "password":"Qwerty@12345"
+}
+
+### Register User
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+    "firstname":"foo",
+    "lastname":"bar",
+    "username":"foo@test",
+    "password":"Qwerty@12345"
+}
+
+### Logout User
+POST {{baseUrl}}/logout
+Content-Type: application/json
+
+{}
+
+### Get User Profile
+GET  {{baseUrl}}/profile
+
+
+### Update User Profile
+PATCH {{baseUrl}}/profile
+Content-Type: application/json
+
+{
+    "firstname":"John"
+}
