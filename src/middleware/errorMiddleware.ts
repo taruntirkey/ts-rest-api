@@ -1,5 +1,5 @@
-import config from "app/config/env.js";
-import { UserError } from "app/modules/users/users.error.js";
+import config from "../config/env.js";
+import { UserError } from "../modules/users/users.error.js";
 import { NextFunction, Request, Response } from "express";
 
 const notFound = (req: Request, res: Response, next: NextFunction) => {

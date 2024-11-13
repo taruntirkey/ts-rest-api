@@ -1,5 +1,5 @@
-import { protect } from "app/middleware/authMiddleware.js";
-import validate from "app/middleware/validateSchema.js";
+import { protect } from "../../middleware/authMiddleware.js";
+import validate from "../../middleware/validateSchema.js";
 import express from "express";
 import {
   authUserHandler,

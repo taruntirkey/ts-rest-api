@@ -20,14 +20,11 @@ app.use(express.urlencoded({ extended: true }));
 // Cookie parser middleware
 app.use(cookieParser());
 
+// Request logger
 app.use(morgan("combined"));
 
 // Register Routes
 app.use("/api", apiRouter);
-
-app.get("/", (req, res) => {
-  res.send("API Running");
-});
 
 // Error Handlers
 app.use(notFound);
