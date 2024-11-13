@@ -56,7 +56,7 @@
 
 1. [Create basic server bootstrap.](#create-basic-server-bootstrap)
 2. [Create "User Registration" route Skeleton.](#create-user-registration-route-skeleton)
-3. Add custom error handler.
+3. [Add custom error handler.](#add-custom-error-handler)
 4. Connect database and create **User** schema.
 5. Implement the "User Registration" route.
 6. Exclude **_password_** field in database result.
@@ -72,19 +72,21 @@
 16. Set HTTP response headers for security.
 17. Rate limiting.
 
-## Create Basic Server Bootstrap
+## Create basic server bootstrap
 
-1. Create _server.ts_ file in **_src_** directory.
-2. Use _express_ to create a server.
-3. Read port from _environment variable_.
+- Create express server with minimum required code.
+- Verify that server is running.
+- Read NODE_ENV and PORT from environment variables instead of hardcoding.
 
 ## Create "User Registration" route Skeleton
 
-1. Create 4 files _users.route.ts, users.controller.ts, users.service.ts, users.repository.ts_ in **_modules/users_** directory. Each feature will have it's own folder.
-2. Add _create_ in repository and return a message "User created".
-3. Add _createUserAccount_ in service and call _create_ here and return it's result to controller.
-4. Add _registerUserHandler_ in controller and return a message "User registration successful" with 201 status code.
-5. Create _userRouter_ and register the controller in route file.
-6. Create _apiRouter_ in **_routes.js_** and add _userRouter_ to it. All the routers from different modules should be added here.
-7. Use _apiRouter_ in server.
-8. Run the app and test using any REST API client. REST Client VS Code extension and Postman are popular options.
+- Create a router for user route.
+- Create a controller and return a simple message.
+- Create a common _routes.ts_ file to combine routes from all modules.
+- Use the combined router from _routes.ts_ to register routes.
+- Verify to check if message is returned successfully.
+
+## Add custom error handler
+
+- Create a middleware to handle errors.
+- Refer [Exress doc](https://expressjs.com/en/starter/faq.html#how-do-i-handle-404-responses)

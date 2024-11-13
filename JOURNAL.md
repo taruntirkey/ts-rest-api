@@ -1,3 +1,30 @@
+# Preface
+
+This document contains steps taken throughout the project development.
+
+# INDEX
+
+- [Dev Environment](#dev-environment)
+- [Project Setup](#project-setup)
+- [Development Tasks](#development-tasks)
+  - [Project Structure](#project-structure)
+  - [Creating a Server](#creating-a-server)
+  - [Environment Variables](#environment-variables)
+  - [Routes Setup](#routes-setup)
+  - [Custom Error Handler](#custom-error-handler)
+  - [Add Rest of the Routes](#add-rest-of-the-routes)
+  - [Database Setup](#database-setup)
+  - [Create user](#create-user)
+  - [Handle Error if user with same username already exists](#handle-error-if-user-with-same-username-already-exists)
+  - [Hash Password before saving](#hash-password-before-saving)
+  - [Generate Token](#generate-token)
+  - [Authenticate User](#authenticate-user)
+  - [Protect Routes](#protect-routes)
+  - [Implement Profile Routes](#implement-profile-routes)
+  - [Validate Schema](#validate-schema)
+  - [Securing the App](#securing-the-app)
+  - [Logging HTTP Requests](#logging-http-requests)
+
 # README file Conventions
 
 | Entity         | Convention           |
@@ -6,6 +33,7 @@
 | directory      | **_italic bold_**    |
 | inline command | `code`               |
 | Code           | ```fenced code block |
+| Steps          | **Bold**             |
 
 # Dev Environment
 
@@ -61,6 +89,8 @@ Download VS Code and install extensions.
 - vscode-icons
 - Multiple cursor case preserve
 
+> [Go to Index](#index)
+
 # Project Setup
 
 ## TypeScript Setup
@@ -102,11 +132,7 @@ npx -p typescript tsc --init
     "moduleResolution": "NodeNext",
     "target": "ES2023",
     "sourceMap": true,
-    "outDir": "dist",
-    "paths": {
-      "@/*": ["./*"],
-      "app/*": ["./src/*"]
-    }
+    "outDir": "dist"
   },
   "include": ["src/**/*"]
 }
@@ -137,10 +163,14 @@ npm i -D tsx
 Add script in _package.json_
 
 ```
-"dev": "tsx watch src/index.ts"
+"dev": "tsx watch src/server.ts"
 ```
 
+> [Go to Index](#index)
+
 ## Project Dependencies
+
+Dependencies will be installed as needed during development.
 
 ### Dependencies
 
@@ -178,7 +208,7 @@ Add script in _package.json_
 -tsconfig.json
 -README.md
 -src
-  -index.ts   // Application startup or bootstrap file.
+  -server.ts   // Application startup or bootstrap file.
   -routes.ts  // Combine all the routes here.
   -config     // Project configurations.
     -env.ts   // Typing environment variables.
@@ -194,13 +224,7 @@ Add script in _package.json_
       -users.error.ts     // Custom errors for users route.
 ```
 
-Role of a route handler:
-
-1. Receive input.
-2. Optionally validates it.
-3. Pass them to business logic layer.
-4. Execute appropriate application logic.
-5. Handle exceptions.
+> [Go to Index](#index)
 
 ## Creating a Server
 
@@ -235,6 +259,8 @@ app
   })
   .on("error", (err) => console.log(err));
 ```
+
+> [Go to Index](#index)
 
 ## Environment Variables
 
@@ -292,9 +318,11 @@ import config from "./config/env.js";
 const port = config.PORT || 3000;
 ```
 
+> [Go to Index](#index)
+
 ## Routes Setup
 
-### Request Body Parser Middleware
+**Request Body Parser Middleware**
 
 Add the follwing in _index.ts_ or the server initializaiton file just below the app initialization.
 
@@ -303,7 +331,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 ```
 
-### Controller-Service-Repository Pattern
+**Controller-Service-Repository Pattern**
 
 Route > Controller > Service > Repository > Schema
 
@@ -313,7 +341,7 @@ Route > Controller > Service > Repository > Schema
 - Repository - Data access.
 - Schema (Entities) - Business logic.
 
-### Add Route
+**Add Route**
 
 In _users.controller.ts_ add the following:
 
@@ -374,6 +402,8 @@ Test using the _REST Client_ extension.
 
 Create a _users.route.test.http_ file in _users_ folder. And add routes for testing.
 
+> [Go to Index](#index)
+
 ## Custom Error Handler
 
 **Install express-async-handler**
@@ -400,7 +430,7 @@ const authUserHandler = asyncHandler(async (req: Request, res: Response) => {
 Create _errorMiddleware.ts_ in **_middleware_** folder
 
 ```
-import config from "app/config/env.js";
+import config from "../config/env.js";
 import { NextFunction, Request, Response } from "express";
 
 const notFound = (req: Request, res: Response, next: NextFunction) => {
@@ -434,6 +464,8 @@ Now add the following to _index.ts_ after routes registration.
 app.use(notFound);
 app.use(errorHandler);
 ```
+
+> [Go to Index](#index)
 
 ## Add Rest of the Routes
 
@@ -501,6 +533,8 @@ userRouter.route("/profile")
 export default userRouter;
 ```
 
+> [Go to Index](#index)
+
 ## Database Setup
 
 **Install Prisma**
@@ -542,6 +576,8 @@ npx prisma migrate dev --name init
 
 Search for _"prisma client best practices"_ and check the prisma docs for prisma client best practice. Copy and use the code.
 
+> [Go to Index](#index)
+
 ## Create user
 
 **Create Data Access for User Registration**
@@ -557,11 +593,8 @@ const create = async (user: Prisma.UserCreateInput) => {
 
   return await prisma.user.create({
     data: { firstname, lastname, username, password },
-    select: {
-      id: true,
-      firstname: true,
-      lastname: true,
-      username: true,
+    omit: {
+      password: true,
     },
   });
 };
@@ -615,6 +648,8 @@ Add a script in _package.json_.
 
 Run the script to open **_Prisma Studio_** and verify the entry.
 
+> [Go to Index](#index)
+
 ## Handle Error if user with same username already exists
 
 **Create custom error in _users.error.ts_.**
@@ -666,6 +701,8 @@ export { UsernameNotAvailableError };
   }
 ```
 
+> [Go to Index](#index)
+
 ## Hash Password before saving
 
 **Install argon2**
@@ -682,6 +719,8 @@ import argon2 from "argon2";
   const hashedPassword = await argon2.hash(newUser.password);
   newUser.password = hashedPassword;
 ```
+
+> [Go to Index](#index)
 
 ## Generate Token
 
@@ -743,6 +782,8 @@ import generateToken from "./utils/generate-token.js";
 await generateToken(res, createdUser.id);
 ```
 
+> [Go to Index](#index)
+
 ## Authenticate User
 
 **_users.repository.ts_**
@@ -755,7 +796,7 @@ const getByUsername = async (username: string) => {
 
 **_users.service.ts_**
 
-Add, export and use in the below method _authUserHandler_.
+Add, export and use the below method in _authUserHandler_.
 
 ```
 const authUser = async (auth: IAuthenticateUser) => {
@@ -779,9 +820,19 @@ const authUser = async (auth: IAuthenticateUser) => {
 
 **_users.error.ts_**
 
-Add and export the below custom user error.
+Add and export the below custom user errors.
 
 ```
+class UserNotFoundError extends UserError {
+  constructor(message?: string) {
+    super({
+      errorMessage: message ?? "Couldn't find your account.",
+      errorCode: 429,
+    });
+    this.name = "UserNotFoundError";
+  }
+}
+
 class InvalidCredentialsError extends UserError {
   constructor(message?: string) {
     super({ errorMessage: message ?? "Invalid credentials", errorCode: 401 });
@@ -799,6 +850,8 @@ const authUserHandler = asyncHandler(async (req: Request, res: Response) => {
   res.send(user);
 });
 ```
+
+> [Go to Index](#index)
 
 ## Protect Routes
 
@@ -855,7 +908,7 @@ const protect = asyncHandler(
 export { protect };
 ```
 
-**Use this middlware**
+> [Go to Index](#index) > **Use this middlware**
 
 _users.route.ts_
 
@@ -866,11 +919,13 @@ userRouter
   .patch(protect, updateUserProfileHandler);
 ```
 
+> [Go to Index](#index)
+
 ## Implement Profile Routes
 
 **Get Profile**
 
-**_users.repository.ts_**
+_users.repository.ts_
 
 ```
 const getById = async (userId: string) => {
@@ -881,13 +936,44 @@ const getById = async (userId: string) => {
 };
 ```
 
-**_users.service.ts_**
+_users.service.ts_
 
 ```
 const getUserProfile = async (userId: string) => {
   return await getById(userId);
 };
 ```
+
+**Update Profile**
+
+_users.repository.ts_
+
+```
+const update = async (userId: string, updateParams: Prisma.UserUpdateInput) => {
+  const { firstname, lastname } = updateParams;
+  return await prisma.user.update({
+    where: { id: userId },
+    data: {
+      firstname,
+      lastname,
+    },
+    omit: {
+      password: true,
+    },
+  });
+};
+```
+
+_users.service.ts_
+
+```
+const updateUserProfile = async (userId: string, updateParams: UpdateUser) => {
+  const { firstname, lastname } = updateParams;
+  return await update(userId, { firstname, lastname });
+};
+```
+
+> [Go to Index](#index)
 
 ## Validate Schema
 
@@ -920,3 +1006,123 @@ const validate =
 
 export default validate;
 ```
+
+Create validation schemas in _users.schema.ts_.
+
+```
+import { z } from "zod";
+
+const createUserSchema = z.object({
+  body: z.object({
+    firstname: z.string().min(1).max(255),
+    lastname: z.string().min(1).max(255),
+    username: z.string().min(3).max(255),
+    password: z
+      .string()
+      .min(12)
+      .max(255)
+      .refine(
+        (val) =>
+          /^.*(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).*$/.test(val),
+        {
+          message:
+            "Password should contain at least one number, one uppercase letter and one special characters !@#$&*.",
+        }
+      ),
+  }),
+});
+
+// Regex Explanation:
+// /^.*(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).*$/
+// ^.*                       Start.
+// (?=.*[A-Z])               At least one uppercase letter.
+// (?=.*[!@#$&*])            At least one special case letter.
+// (?=.*[0-9].*[0-9])        At least one digit.
+// (?=.*[a-z])               At least one lowercase letter.
+// .*$                       End.
+
+const authUserSchema = z.object({
+  body: z.object({
+    username: z.string().min(3),
+    password: z.string(),
+  }),
+});
+
+const updateUserSchema = z.object({
+  body: z
+    .object({
+      firstname: z.string().min(1),
+      lastname: z.string().min(1),
+    })
+    .partial()
+    .refine(
+      ({ firstname, lastname }) =>
+        firstname !== undefined || lastname !== undefined,
+      {
+        message: "One of the fields must be defined",
+      }
+    ),
+});
+
+type CreateUser = z.infer<typeof createUserSchema.shape.body>;
+type AuthUser = z.infer<typeof authUserSchema.shape.body>;
+type UpdateUser = z.infer<typeof updateUserSchema.shape.body>;
+
+export {
+  createUserSchema,
+  CreateUser,
+  authUserSchema,
+  AuthUser,
+  updateUserSchema,
+  UpdateUser,
+};
+```
+
+> [Go to Index](#index)
+
+## Securing the App
+
+Add helmet package.
+
+```
+npm i helmet
+```
+
+Use in _server.ts_.
+
+```
+import helmet from 'helmet';
+
+...
+
+app.use(helmet()); // Add this as first middleware.
+```
+
+> TODO: Rate limiting
+> [Go to Index](#index)
+
+## Logging HTTP Requests
+
+**Install morgan**
+
+```
+npm i morgan
+```
+
+**Install TS definition for morgan**
+
+```
+npm i -D @types/morgan
+```
+
+**Use morgan middleware**
+
+Add this middleware just before registering routes.
+
+```
+import morgan from "morgan";
+...
+app.use(morgan("Combined"));
+```
+
+> [Go to Index](#index)
