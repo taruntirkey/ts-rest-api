@@ -18,15 +18,15 @@
 16. API Documentaion.
 17. Request logger.
 18. Git source control.
+19. Rate Limiting
 
 # TODO
 
 1. Securing express server.
-2. Rate limiting.
-3. Access token and Refresh token.
-4. Refresh token rotation.
-5. Refresh token reuse detection.
-6. Dockerize app.
+2. Access token and Refresh token.
+3. Refresh token rotation.
+4. Refresh token reuse detection.
+5. Dockerize app.
 
 # Feature based project structure
 

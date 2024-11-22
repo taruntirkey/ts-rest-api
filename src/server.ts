@@ -5,10 +5,14 @@ import morgan from "morgan";
 import config from "./config/env.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import apiRouter from "./routes.js";
+import { rateLimitByIp } from "./middleware/apiRateLimitMiddleware.js";
 
 const port = config.PORT || 3000;
 
 const app = express();
+
+// Rate Limiter
+app.use(rateLimitByIp);
 
 // Help secure Express apps by setting HTTP response headers.
 app.use(helmet());

@@ -21,6 +21,8 @@
    - [Custom Error Handler](#custom-error-handler)
    - [JSON Web Token](#json-web-token)
    - [Authorization](#authorization)
+   - [Rate Limiter](#rate-limiter)
+   - [Schema Validation](#schema-validation)
 4. [Git Source Control](#git-source-control)
    - [Basic Commands](#basic-commands)
    - [Git Workflow](#git-workflow)
@@ -108,7 +110,7 @@ npm init -y
 **Project Dependencies**
 
 ```
-npm i express dotenv jsonwebtoken cookie-parser express-async-handler argon2 zod helmet morgan
+npm i express dotenv jsonwebtoken cookie-parser express-async-handler argon2 zod helmet morgan express-rate-limit
 ```
 
 | package               | description                                  |
@@ -122,6 +124,7 @@ npm i express dotenv jsonwebtoken cookie-parser express-async-handler argon2 zod
 | zod                   | Schema declaration and validation library    |
 | helmet                | Secure express app with various HTTP headers |
 | morgan                | Request logger                               |
+| express-rate-limit    | Request rate limiter for express             |
 
 ## Dev Dependencies
 
@@ -261,10 +264,14 @@ import morgan from "morgan";
 import config from "./config/env.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import apiRouter from "./routes.js";
+import { rateLimitByIp } from "./middleware/apiRateLimitMiddleware.js";
 
 const port = config.PORT || 3000;
 
 const app = express();
+
+// Rate Limiter
+app.use(rateLimitByIp);
 
 // Help secure Express apps by setting HTTP response headers.
 app.use(helmet());
@@ -504,6 +511,68 @@ const protect = asyncHandler(
 );
 
 export { protect };
+```
+
+> [Go to Index](#quickstart-index)
+
+## Rate Limiter
+
+**Middleware**
+
+```
+import { rateLimit } from "express-rate-limit";
+
+// Maximum 100 requests per 15-min from same IP.
+const rateLimitByIp = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipFailedRequests: true,
+  message: "You have exceeded the request limit.",
+});
+
+// Maximum 10 failed login requests per 3 hours by same user.
+const rateLimitByUser = rateLimit({
+  windowMs: 3 * 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  keyGenerator: (req, res) => {
+    return req.body.username;
+  },
+  message: "Your account is blocked for 3 hours due to suspicious activity.",
+});
+
+export { rateLimitByIp, rateLimitByUser };
+```
+
+**Usage**
+
+_server.ts_
+
+```
+import { rateLimitByIp } from "./middleware/apiRateLimitMiddleware.js";
+
+const app = express();
+
+// Rate Limiter
+app.use(rateLimitByIp);
+...
+```
+
+_users.route.ts_
+
+```
+import { rateLimitByUser } from "../../middleware/apiRateLimitMiddleware.js";
+...
+userRouter.post(
+  "/auth",
+  rateLimitByUser,
+  validate(authUserSchema),
+  authUserHandler
+);
 ```
 
 > [Go to Index](#quickstart-index)

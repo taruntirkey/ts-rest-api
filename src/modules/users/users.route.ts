@@ -13,11 +13,17 @@ import {
   createUserSchema,
   updateUserSchema,
 } from "./users.schema.js";
+import { rateLimitByUser } from "../../middleware/apiRateLimitMiddleware.js";
 
 const userRouter = express.Router();
 
 userRouter.post("/", validate(createUserSchema), registerUserHandler);
-userRouter.post("/auth", validate(authUserSchema), authUserHandler);
+userRouter.post(
+  "/auth",
+  rateLimitByUser,
+  validate(authUserSchema),
+  authUserHandler
+);
 userRouter.post("/logout", logoutUserHandler);
 userRouter
   .route("/profile")
