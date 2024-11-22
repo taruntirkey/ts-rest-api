@@ -2,11 +2,11 @@
   "name": "ts-rest-api",
   "version": "1.0.0",
   "description": "- Node.js\r - npm\r - typescript",
-  "main": "src/server.js",
+  "main": "dist/src/server.js",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node ./dist/src/server.js",
     "db-client": "prisma generate",
     "db-studio": "prisma studio"
@@ -21,6 +21,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.9.0",
     "prisma": "^5.22.0",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   },

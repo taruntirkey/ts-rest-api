@@ -1,6 +1,5 @@
-import { protect } from "../../middleware/authMiddleware.js";
-import validate from "../../middleware/validateSchema.js";
 import express from "express";
+import { protect, validate, rateLimitByUser } from "@middleware/index.js";
 import {
   authUserHandler,
   getUserProfileHandler,
@@ -13,7 +12,6 @@ import {
   createUserSchema,
   updateUserSchema,
 } from "./users.schema.js";
-import { rateLimitByUser } from "../../middleware/apiRateLimitMiddleware.js";
 
 const userRouter = express.Router();
 

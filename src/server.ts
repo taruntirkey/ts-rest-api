@@ -3,9 +3,8 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import config from "./config/env.js";
-import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
+import { errorHandler, notFound, rateLimitByIp } from "@middleware/index.js";
 import apiRouter from "./routes.js";
-import { rateLimitByIp } from "./middleware/apiRateLimitMiddleware.js";
 
 const port = config.PORT || 3000;
 

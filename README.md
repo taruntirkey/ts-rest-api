@@ -12,6 +12,7 @@
    - [Dev Dependencies](#dev-dependencies)
    - [TypeScript Configuration](#typescript-configuration)
    - [package.json](#packagejson)
+   - [Path Alias](#path-alias)
 3. [Dev Tasks](#dev-tasks)
    - [Project Structure](#project-structure)
    - [Environment Variables](#environment-variables)
@@ -129,19 +130,20 @@ npm i express dotenv jsonwebtoken cookie-parser express-async-handler argon2 zod
 ## Dev Dependencies
 
 ```
-npm i -D typescript tsx @types/node @types/express prisma @types/jsonwebtoken @types/cookie-parser @types/morgan
+npm i -D typescript tsx @types/node @types/express prisma @types/jsonwebtoken @types/cookie-parser @types/morgan tsc-alias
 ```
 
-| package              | description                            |
-| -------------------- | -------------------------------------- |
-| typescript           | Project level TypeScript installation  |
-| tsx                  | TypeScript runtime environment in node |
-| @types/node          | TS definition for node                 |
-| @types/express       | TS definition for express              |
-| prisma               | Prisma CLI                             |
-| @types/jsonwebtoken  | TS definition for jsonwebtoken         |
-| @types/cookie-parser | TS definition for cookie-parser        |
-| @types/morgan        | TS definition for morgan               |
+| package              | description                                                          |
+| -------------------- | -------------------------------------------------------------------- |
+| typescript           | Project level TypeScript installation                                |
+| tsx                  | TypeScript runtime environment in node                               |
+| @types/node          | TS definition for node                                               |
+| @types/express       | TS definition for express                                            |
+| prisma               | Prisma CLI                                                           |
+| @types/jsonwebtoken  | TS definition for jsonwebtoken                                       |
+| @types/cookie-parser | TS definition for cookie-parser                                      |
+| @types/morgan        | TS definition for morgan                                             |
+| tsc-alias            | Replace alias paths with relative paths after typescript compilation |
 
 > [Go to Index](#quickstart-index)
 
@@ -158,14 +160,16 @@ npx -p typescript tsc --init
 ```
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ES2023",
-    "sourceMap": true,
-    "outDir": "dist",
-    "paths": {
-      "@/*": ["./*"],
-    }
+    "target": "ES6" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "module": "NodeNext" /* Specify what module code is generated. */,
+    "moduleResolution": "NodeNext" /* Specify how TypeScript looks up a file from a given module specifier. */,
+    "sourceMap": true /* Create source map files for emitted JavaScript files. */,
+    "outDir": "dist" /* Specify an output folder for all emitted files. */,
+    // "verbatimModuleSyntax": true /* Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the 'module' setting. */,
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+    "strict": true /* Enable all strict type-checking options. */,
+    "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "include": ["src/**/*"]
 }
@@ -193,10 +197,30 @@ npx -p typescript tsc --init
 "scripts": {
   "dev": "tsx watch src/server.ts",
   "build": "tsc"
+  "start": "node ./dist/src/server.js"
 },
 ```
 
 > [Go to Index](#quickstart-index)
+
+## Path Alias
+
+_tsconfig.json_
+
+```
+"baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
+    "paths": {
+      "@/*": ["./*"],
+      "@app/*": ["./src/*"],
+      "@middleware/*": ["./src/middleware/*"]
+    } /* Specify a set of entries that re-map imports to additional lookup locations. */,
+```
+
+modify `"build"` script in _package.json_
+
+```
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+```
 
 # Dev Tasks
 
